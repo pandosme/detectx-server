@@ -1,0 +1,4 @@
+# Model directory
+# Contains TensorFlow Lite COCO model files:
+# - model.tflite (YOLOv8 INT8 quantized, 2.1 MB, 640x640)
+# - labels.txt (90 COCO classes)

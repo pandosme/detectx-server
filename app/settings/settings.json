@@ -1,0 +1,14 @@
+{
+  "model": {
+    "path": "model/model.tflite",
+    "labels": "model/labels.txt",
+    "scaleMode": "letterbox",
+    "objectness": 0.25,
+    "confidence": 0.30,
+    "nms": 0.05
+  },
+  "server": {
+    "max_queue_size": 3,
+    "max_image_size_mb": 10
+  }
+}

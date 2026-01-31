@@ -1,0 +1,114 @@
+[
+    {
+        "id": "simple_inference",
+        "type": "tab",
+        "label": "Simple Inference Flow",
+        "disabled": false,
+        "info": "Single image inference example"
+    },
+    {
+        "id": "inject_image",
+        "type": "inject",
+        "z": "simple_inference",
+        "name": "Trigger",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "/path/to/test.jpg",
+        "payloadType": "str",
+        "x": 130,
+        "y": 100,
+        "wires": [["read_image"]]
+    },
+    {
+        "id": "read_image",
+        "type": "file in",
+        "z": "simple_inference",
+        "name": "Read JPEG",
+        "filename": "payload",
+        "format": "",
+        "chunk": false,
+        "sendError": true,
+        "encoding": "none",
+        "allProps": false,
+        "x": 300,
+        "y": 100,
+        "wires": [["set_headers"]]
+    },
+    {
+        "id": "set_headers",
+        "type": "function",
+        "z": "simple_inference",
+        "name": "Set Headers",
+        "func": "msg.headers = { 'Content-Type': 'image/jpeg' };\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 100,
+        "wires": [["infer"]]
+    },
+    {
+        "id": "infer",
+        "type": "http request",
+        "z": "simple_inference",
+        "name": "Inference",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://192.168.1.100/local/detectx/inference-jpeg",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "digest",
+        "senderr": false,
+        "credentials": {
+            "user": "root",
+            "password": "pass"
+        },
+        "x": 640,
+        "y": 100,
+        "wires": [["format_output"]]
+    },
+    {
+        "id": "format_output",
+        "type": "function",
+        "z": "simple_inference",
+        "name": "Format Output",
+        "func": "if (msg.payload && msg.payload.detections) {\n    const detections = msg.payload.detections;\n    msg.payload = {\n        count: detections.length,\n        detections: detections.map(d => ({\n            label: d.label,\n            confidence: (d.confidence * 100).toFixed(1) + '%',\n            bbox: d.bbox_pixels\n        }))\n    };\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 100,
+        "wires": [["debug_output"]]
+    },
+    {
+        "id": "debug_output",
+        "type": "debug",
+        "z": "simple_inference",
+        "name": "Detections",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 100,
+        "wires": []
+    }
+]

@@ -1,0 +1,149 @@
+(base) fred@fred-ubuntu:~/dataset$ python eval_detectx.py --camera-host kontor.internal --username nodered --password rednode annoying-birds/test
+Querying capabilities from http://kontor.internal/local/detectx/capabilities ...
+Model input: 960x960x3
+Found 51 images, starting evaluation with input-format=jpeg...
+large_grey_babbler44_jpg.rf.754f476574871219d28c779e0923e004.jpg: OK
+little_grebe40_jpg.rf.014b0bf7cc3c16f6029fbb65e3357b77.jpg: 5 False
+  GT count=0, Det count=1, Matches=0
+  FP Det idx=0 cls=5(heron) conf=0.652 box={'x': 55, 'y': 104, 'w': 208, 'h': 133}
+little_grebe40_jpg.rf.014b0bf7cc3c16f6029fbb65e3357b77.jpg: 5 False
+little_grebe45_jpg.rf.7ae73c2f139e0912811b4b9b154aa476.jpg: 3 False
+  GT count=0, Det count=1, Matches=0
+  FP Det idx=0 cls=3(other) conf=0.334 box={'x': 123, 'y': 55, 'w': 136, 'h': 91}
+little_grebe45_jpg.rf.7ae73c2f139e0912811b4b9b154aa476.jpg: 3 False
+little_grebe48_jpg.rf.ba9982004464c8bfdf95d789bf8c55ca.jpg: 5 False
+  GT count=0, Det count=1, Matches=0
+  FP Det idx=0 cls=5(heron) conf=0.527 box={'x': 123, 'y': 155, 'w': 156, 'h': 252}
+little_grebe48_jpg.rf.ba9982004464c8bfdf95d789bf8c55ca.jpg: 5 False
+little_grebe4_jpg.rf.7292265932e3151944967e96d6c9f508.jpg: OK
+little_swift23_jpg.rf.c6b490edf30fed1272efffe67469cbab.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 110, 'y': 59, 'w': 224, 'h': 297}
+little_swift23_jpg.rf.c6b490edf30fed1272efffe67469cbab.jpg: 3 Missed
+little_swift50_jpg.rf.0d18ad895a42d7904e03272a81bf85bc.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 53, 'y': 130, 'w': 290, 'h': 146}
+little_swift50_jpg.rf.0d18ad895a42d7904e03272a81bf85bc.jpg: 3 Missed
+little_swift7_jpg.rf.e6042201e1080e22f5fb993377c23af5.jpg: OK
+marsh_harrier_copy2_copy1_jpg.rf.f85a1743bcd89ca0d8472e256bcdc16c.jpg: OK
+marsh_harrier_nv8_5096lr_jpg.rf.7848cf9827aa262aa2949d469ed0d940.jpg: OK
+montagus_harrier-_photo_dr-_r-b-balar-_cd163-_img_4743_jpg.rf.91bdfff419c6aaec77ace64fc1036946.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 74, 'y': 112, 'w': 186, 'h': 149}
+montagus_harrier-_photo_dr-_r-b-balar-_cd163-_img_4743_jpg.rf.91bdfff419c6aaec77ace64fc1036946.jpg: 3 Missed
+montagus_harrier_3343_jpg.rf.b46043fc997df5e486073c6d30243309.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 78, 'y': 60, 'w': 231, 'h': 222}
+montagus_harrier_3343_jpg.rf.b46043fc997df5e486073c6d30243309.jpg: 3 Missed
+montagus_harrier__male_circus_pygargus_jpg.rf.26ff51cd20e89bf9336f42814cc40c91.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 50, 'y': 146, 'w': 154, 'h': 194}
+montagus_harrier__male_circus_pygargus_jpg.rf.26ff51cd20e89bf9336f42814cc40c91.jpg: 3 Missed
+natureobserve_0201123857826_4375_825_res_jpg.rf.6739b888d0692f04001d983fa723b8a3.jpg: OK
+natureobserve_0201123857846_4375_693_res_jpg.rf.f35ad332553bd9f95dc7010162322f4c.jpg: OK
+natureobserve_0427001220994_4_7_res_jpg.rf.0944e4d5afda9789a55bb08a2405c1f3.jpg: OK
+natureobserve_0508112203159_4375_133_res_jpg.rf.a8b4e3d05ba4d9d4d39aaf136e3f7e25.jpg: OK
+natureobserve_0926220821744_28245_577_res_jpg.rf.bfcdfe2ddccea256196404ce0d849882.jpg: OK
+natureobserve_1206170104902_4375_779_res_jpg.rf.2331e8002287411a27c7acfd81306ea5.jpg: OK
+natureobserve_1213152856582_4_522_res_jpg.rf.b6295bddd825f4bf4d498ccaaf4576a1.jpg: OK
+natureobserve_1220200302355_4375_946_res_jpg.rf.2fa52b9c607e0a2c0eb33fcc0d9222c7.jpg: 0 Missed 0 Missed 0 False
+  GT count=2, Det count=1, Matches=0
+  FN GT idx=0 cls=0(crow) box={'x': 145, 'y': 261, 'w': 155, 'h': 111}
+  FN GT idx=1 cls=0(crow) box={'x': 306, 'y': 284, 'w': 135, 'h': 93}
+  FP Det idx=0 cls=0(crow) conf=0.463 box={'x': 293, 'y': 230, 'w': 124, 'h': 139}
+natureobserve_1220200302355_4375_946_res_jpg.rf.2fa52b9c607e0a2c0eb33fcc0d9222c7.jpg: 0 Missed 0 Missed 0 False
+nightheron2ob_jpg.rf.94e73646a27056097681bb75b693260b.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 51, 'y': 133, 'w': 223, 'h': 233}
+nightheron2ob_jpg.rf.94e73646a27056097681bb75b693260b.jpg: 3 Missed
+obcid_barn_owl_tyto_alba_stertens_tmb11649_jpg.rf.5d8aa1478f0e226044c9439f487abb79.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 164, 'y': 51, 'w': 97, 'h': 312}
+obcid_barn_owl_tyto_alba_stertens_tmb11649_jpg.rf.5d8aa1478f0e226044c9439f487abb79.jpg: 3 Missed
+obcid_barn_owl_tyto_alba_stertens_tmb12887_jpg.rf.776138901dc13222d288d348eb610da4.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 0, 'y': 54, 'w': 305, 'h': 361}
+obcid_barn_owl_tyto_alba_stertens_tmb12887_jpg.rf.776138901dc13222d288d348eb610da4.jpg: 3 Missed
+obcid_barn_owl_tyto_alba_stertens_tmb5522_jpg.rf.1129bcd6f19120fc64de26b17d5384ba.jpg: OK
+obcid_booted_eagle_hieraaetus_pennatus_tmb1341_jpg.rf.c0e6e4a7b5a90eb763a00fc7741766c5.jpg: OK
+obcid_glossy_ibis_plegadis_falcinellus_tmb4142_jpg.rf.12131e7bbe83ea8fc19ca3775304a988.jpg: OK
+obcid_glossy_ibis_plegadis_falcinellus_tmb9124_jpg.rf.56a4ea9b99029ccd01e2f04cecffad01.jpg: OK
+obcid_purple_swamphen_porphyrio_porphyrio_poliocephalus_tmb0056_jpg.rf.1e9f93b044bbb2c68b3367bd685feec4.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 71, 'y': 65, 'w': 242, 'h': 301}
+obcid_purple_swamphen_porphyrio_porphyrio_poliocephalus_tmb0056_jpg.rf.1e9f93b044bbb2c68b3367bd685feec4.jpg: 3 Missed
+obcid_tawny_pipit_anthus_campestris_tmb10070_jpg.rf.87fc436900c4a4458ac5d485f461cd8a.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 35, 'y': 115, 'w': 320, 'h': 219}
+obcid_tawny_pipit_anthus_campestris_tmb10070_jpg.rf.87fc436900c4a4458ac5d485f461cd8a.jpg: 3 Missed
+obcid_thickbilled_flowerpecker_dicaeum_agile_agile_tmb7231_jpg.rf.ecda969226556c36ddc1079067d1f596.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 167, 'y': 74, 'w': 154, 'h': 287}
+obcid_thickbilled_flowerpecker_dicaeum_agile_agile_tmb7231_jpg.rf.ecda969226556c36ddc1079067d1f596.jpg: 3 Missed
+oriental_honey_buzzard4_jpg.rf.47c3cf27dd837733aac92a9b09b3e473.jpg: OK
+oriental_honey_buzzard_5668_jpg.rf.eb17ecf60cb9d4d8fea59f549c0fb1cd.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 38, 'y': 77, 'w': 158, 'h': 259}
+oriental_honey_buzzard_5668_jpg.rf.eb17ecf60cb9d4d8fea59f549c0fb1cd.jpg: 3 Missed
+oriental_honey_buzzard_7704_jpg.rf.a7fe58d0804991fce13f271f55d80b35.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 152, 'y': 57, 'w': 184, 'h': 309}
+oriental_honey_buzzard_7704_jpg.rf.a7fe58d0804991fce13f271f55d80b35.jpg: 3 Missed
+oriental_honey_buzzard_copy21_jpg.rf.1f057681f9b5a238791158070ab4de90.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 69, 'y': 87, 'w': 315, 'h': 264}
+oriental_honey_buzzard_copy21_jpg.rf.1f057681f9b5a238791158070ab4de90.jpg: 3 Missed
+oriental_honeybuzzard_pernis_ptilorhynchus_jpg.rf.1b9d146668392b3f6e84065111660a4f.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 157, 'y': 56, 'w': 131, 'h': 339}
+oriental_honeybuzzard_pernis_ptilorhynchus_jpg.rf.1b9d146668392b3f6e84065111660a4f.jpg: 3 Missed
+orientalhoneybuzzardsundarbansfeb21461_jpg.rf.6521344d68db3570cc8e01fb13e76fb1.jpg: OK
+pipitblythsjhanjraula231120183_jpg.rf.6a174257c9b8f674d6575a8b879ec6ac.jpg: OK
+plumheaded_parakeet4_jpg.rf.4417a91164c75079eb6f6a89e8069f95.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 26, 'y': 103, 'w': 251, 'h': 251}
+plumheaded_parakeet4_jpg.rf.4417a91164c75079eb6f6a89e8069f95.jpg: 3 Missed
+plumheaded_parakeet7_jpg.rf.382f7197d3c7266c14e4b52d5435f7e9.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 138, 'y': 39, 'w': 197, 'h': 346}
+plumheaded_parakeet7_jpg.rf.382f7197d3c7266c14e4b52d5435f7e9.jpg: 3 Missed
+plumheaded_parakeet8_jpg.rf.ecc54b503e998ba4b7a9c42f535221e3.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 117, 'y': 63, 'w': 212, 'h': 292}
+plumheaded_parakeet8_jpg.rf.ecc54b503e998ba4b7a9c42f535221e3.jpg: 3 Missed
+purple_moorhen-_photo_dr-_r-b-balar-_cd169-_img_0200_jpg.rf.fc70819353269ffc2b5f801cecf502da.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 84, 'y': 52, 'w': 212, 'h': 300}
+purple_moorhen-_photo_dr-_r-b-balar-_cd169-_img_0200_jpg.rf.fc70819353269ffc2b5f801cecf502da.jpg: 3 Missed
+purple_swamphen__profile_porphyrio_porphyrio1_jpg.rf.b725fadb5fa2ad16ae7c3890842c01a5.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 42, 'y': 85, 'w': 212, 'h': 319}
+purple_swamphen__profile_porphyrio_porphyrio1_jpg.rf.b725fadb5fa2ad16ae7c3890842c01a5.jpg: 3 Missed
+purple_swamphen_dsc_6347_01_jpg.rf.905a547666d6cc0c0604e04977669af9.jpg: OK
+purple_swamphen_dsc_6350_jpg.rf.a8f90a2746aaf66971e59bc110e74737.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 20, 'y': 20, 'w': 287, 'h': 371}
+purple_swamphen_dsc_6350_jpg.rf.a8f90a2746aaf66971e59bc110e74737.jpg: 3 Missed
+purple_swamphene1_jpg.rf.ed0f15c9472ce3fb30cbf282ace894f1.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 88, 'y': 49, 'w': 280, 'h': 333}
+purple_swamphene1_jpg.rf.ed0f15c9472ce3fb30cbf282ace894f1.jpg: 3 Missed
+purplemoorhen-photodr-r-b-balar-cd157-img_4828_jpg.rf.2e457491706845284bbc2f5c69cea74f.jpg: OK
+red2_jpg.rf.090006be6d36b7b2ba67a49962db028f.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 121, 'y': 48, 'w': 285, 'h': 323}
+red2_jpg.rf.090006be6d36b7b2ba67a49962db028f.jpg: 3 Missed
+red_headed_bunting111_copy1_jpg.rf.4971611bc819935063eccc0f17896834.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 122, 'y': 75, 'w': 149, 'h': 260}
+red_headed_bunting111_copy1_jpg.rf.4971611bc819935063eccc0f17896834.jpg: 3 Missed
+red_headed_bunting_1_jpg.rf.6120a8b906c860eceac5d27fca817c46.jpg: OK
+redheaded_bunting_003--1-_jpg.rf.f0003a2a9ea78e2d0082a162f2a99f8e.jpg: 3 Missed
+  GT count=1, Det count=0, Matches=0
+  FN GT idx=0 cls=3(other) box={'x': 94, 'y': 105, 'w': 82, 'h': 229}
+redheaded_bunting_003--1-_jpg.rf.f0003a2a9ea78e2d0082a162f2a99f8e.jpg: 3 Missed
+======= Summary =======
+Images: 51
+Total GT: 47
+Total Det: 24
+Total Matches (TP): 20
