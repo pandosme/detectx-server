@@ -1,10 +1,10 @@
-# DetectX COCO Server
+# DetectX Server
 
-High-performance TensorFlow Lite inference server for Axis cameras with COCO dataset support, optimized for ARTPEC-9 (aarch64) hardware acceleration.
+High-performance TensorFlow Lite inference server for Axis cameras, optimized for ARTPEC-9 (aarch64) hardware acceleration.
 
 ## Overview
 
-DetectX COCO Server is a FastAPI-based inference service that provides real-time object detection using TensorFlow Lite models trained on the COCO dataset (90 classes including person, vehicle, animal detection). It's designed to run on edge devices and supports JPEG and raw tensor inputs with multiple preprocessing modes.
+DetectX Server is a FastAPI-based inference service that provides real-time object detection using TensorFlow Lite models. It's designed to run on edge devices and supports JPEG and raw tensor inputs with multiple preprocessing modes. The server ships with a COCO dataset model (90 classes) but can be configured to use any TFLite INT8 quantized model.
 
 ## Relationship to DetectX
 
@@ -12,7 +12,7 @@ This project is based on [DetectX](https://github.com/pandosme/DetectX), a stand
 
 **Key Differences:**
 
-| Feature | [DetectX](https://github.com/pandosme/DetectX) (Original) | DetectX COCO (This Project) |
+| Feature | [DetectX](https://github.com/pandosme/DetectX) (Original) | DetectX Server (This Project) |
 |---------|-------------|------------------------------|
 | **Architecture** | All-in-one on single camera | Client/Server split |
 | **Platform** | ARTPEC-9 only | Server: ARTPEC-9<br>Client: ARTPEC-7/8/9 |
@@ -28,7 +28,7 @@ This project is based on [DetectX](https://github.com/pandosme/DetectX), a stand
 **When to Use Each:**
 
 - **Use DetectX (original)** if you have ARTPEC-9 cameras and want standalone operation
-- **Use DetectX COCO** if you want to:
+- **Use DetectX Server** if you want to:
   - Enable object detection on older ARTPEC-7/8 cameras
   - Share inference compute across multiple cameras
   - Centralize model management on one camera
@@ -66,9 +66,9 @@ This project is based on [DetectX](https://github.com/pandosme/DetectX), a stand
 └─────────────┘
 ```
 
-## COCO Dataset Support
+## Example Model: COCO Dataset
 
-This server is configured to use the **COCO (Common Objects in Context)** dataset with **90 object classes**:
+The server ships with a pre-trained **COCO (Common Objects in Context)** model supporting **90 object classes**:
 
 **People & Body Parts**: person
 **Vehicles**: bicycle, car, motorcycle, airplane, bus, train, truck, boat
@@ -89,18 +89,18 @@ The model achieves good accuracy on these common everyday objects, making it ide
 
 - **Platform**: ARTPEC-9 (aarch64) or compatible
 - **Docker**: For containerized deployment
-- **Model**: TensorFlow Lite INT8 quantized COCO model (.tflite) - **included**
-- **Labels**: COCO class labels file - **included** (90 classes)
+- **Model**: TensorFlow Lite INT8 quantized model (.tflite) - **COCO example included**
+- **Labels**: Class labels file - **COCO example included** (90 classes)
 
 ## Quick Start
 
-### 1. Model Files (Already Included)
+### 1. Model Files
 
-The COCO model and labels are already included in `app/model/`:
-- `model.tflite` - YOLOv8 INT8 quantized (2.1 MB, 640x640 input)
+The server ships with a COCO example model in `app/model/`:
+- `model.tflite` - YOLOv8 INT8 quantized (2.1 MB, 640x640 input, 90 COCO classes)
 - `labels.txt` - 90 COCO class labels
 
-**To use a custom model**, replace these files with your own.
+**To use your own model**, simply replace these files with your custom TFLite INT8 model and labels.
 
 ### 2. Build and Run with Docker
 
@@ -208,7 +208,7 @@ inference:
 
 ## Client Integration
 
-This server is designed to work with [DetectX COCO Client](https://github.com/yourusername/detectx-coco-client), an ACAP application for Axis cameras supporting ARTPEC-7, ARTPEC-8, and ARTPEC-9.
+This server is designed to work with [DetectX Client](https://github.com/pandosme/detectx-client), an ACAP application for Axis cameras supporting ARTPEC-7, ARTPEC-8, and ARTPEC-9.
 
 **Deployment Options:**
 1. **Separate Cameras**: Server on ARTPEC-9 camera, clients on other cameras (any ARTPEC-7/8/9)
@@ -235,7 +235,7 @@ for det in detections:
 
 ## Dataset Validation
 
-A key use case for DetectX COCO Server is **dataset validation** - testing how well your model performs in real-world camera conditions before deployment.
+A key use case for DetectX Server is **dataset validation** - testing how well your model performs in real-world camera conditions before deployment.
 
 **Use Case**: You have a dataset of images and want to understand model performance in your specific camera environment.
 
@@ -243,7 +243,7 @@ A key use case for DetectX COCO Server is **dataset validation** - testing how w
 ```python
 #!/usr/bin/env python3
 """
-Dataset validation script for DetectX COCO Server
+Dataset validation script for DetectX Server
 Tests model performance against ground truth annotations
 """
 
@@ -383,5 +383,5 @@ pytest tests/
 ## Links
 
 - **Original Project**: [DetectX](https://github.com/pandosme/DetectX) by Fredrik Persson
-- **Client**: [DetectX COCO Client](https://github.com/yourusername/detectx-coco-client)
-- **Issues**: [Report bugs](https://github.com/yourusername/detectx-coco-server/issues)
+- **Client**: [DetectX Client](https://github.com/pandosme/detectx-client)
+- **Issues**: [Report bugs](https://github.com/pandosme/detectx-server/issues)
