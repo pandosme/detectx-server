@@ -1,0 +1,85 @@
+DetectX Server
+Copyright 2026 Fred Juhlin
+
+This product was developed by Fred Juhlin (fred.juhlin@gmail.com).
+
+================================================================================
+
+REQUIRED ATTRIBUTION
+
+This software is licensed under the Apache License 2.0. Anyone using, modifying,
+or distributing this software MUST include this NOTICE file and provide
+attribution to:
+
+   Fred Juhlin
+   Email: fred.juhlin@gmail.com
+   Project: DetectX Server - TensorFlow Lite Inference Server for Axis Cameras
+   Repository: https://github.com/pandosme/detectx-server
+
+================================================================================
+
+ATTRIBUTION REQUIREMENTS
+
+When using this software in binary or source form:
+
+1. You MUST retain this NOTICE file
+2. You MUST include attribution to Fred Juhlin in any documentation
+3. You MUST retain all copyright notices
+4. You MUST state any modifications you make to the source code
+5. You MUST comply with the Apache License 2.0 terms
+
+For derivative works or commercial products:
+- Include "Based on DetectX Server by Fred Juhlin" in product documentation
+- Provide a link to https://github.com/pandosme/detectx-server
+- Maintain this NOTICE file in all distributions
+
+================================================================================
+
+THIRD-PARTY SOFTWARE COMPONENTS
+
+This software includes or links to the following third-party components:
+
+1. TensorFlow Lite
+   Copyright The TensorFlow Authors
+   License: Apache License 2.0
+   https://www.tensorflow.org/lite
+
+2. cJSON
+   Copyright (c) 2009-2017 Dave Gamble and cJSON contributors
+   License: MIT License
+   https://github.com/DaveGamble/cJSON
+
+3. TurboJPEG (libjpeg-turbo)
+   Copyright (C) 2009-2023 D. R. Commander
+   Copyright (C) 2015, 2020-2021 Arm Limited
+   License: BSD-style licenses (IJG, BSD 3-Clause, zlib)
+   https://libjpeg-turbo.org/
+
+4. Axis ACAP SDK
+   Copyright Axis Communications AB
+   License: Proprietary (see Axis ACAP SDK license agreement)
+   https://axiscommunications.github.io/acap-documentation/
+
+All third-party licenses are compatible with Apache License 2.0 and their
+respective copyright notices and license terms are preserved in their
+original source files.
+
+================================================================================
+
+DISCLAIMER
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+================================================================================
+
+For support, questions, or contributions:
+
+Fred Juhlin
+Email: fred.juhlin@gmail.com
+GitHub: https://github.com/pandosme/detectx-server
