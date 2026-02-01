@@ -21,6 +21,7 @@
 #include "Model.h"
 #include "cJSON.h"
 #include "labelparse.h"
+#include "jpeg_decoder.h"
 
 
 #define LOG(fmt, args...)    { syslog(LOG_INFO, fmt, ## args); printf(fmt, ## args);}
@@ -261,9 +262,17 @@ static void http_inference_jpeg(ACAP_HTTP_Response response, const ACAP_HTTP_Req
         return;
     }
 
+    // Get JPEG dimensions
+    int image_width, image_height;
+    if (!JPEG_GetDimensions(body_data, body_size, &image_width, &image_height)) {
+        ACAP_HTTP_Respond_Error(response, 400, "Bad Request: Invalid JPEG image");
+        return;
+    }
+
     // Create inference request
     InferenceRequest* inf_request = Server_CreateRequest(body_data, body_size,
-                                                         "image/jpeg", image_index);
+                                                         "image/jpeg", image_index,
+                                                         image_width, image_height);
     if (!inf_request) {
         ACAP_HTTP_Respond_Error(response, 500, "Internal Server Error: Failed to create request");
         return;
@@ -324,9 +333,14 @@ static void http_inference_tensor(ACAP_HTTP_Response response, const ACAP_HTTP_R
         return;
     }
 
+    // For tensor input, dimensions are model dimensions
+    int tensor_width = Model_GetWidth();
+    int tensor_height = Model_GetHeight();
+
     // Create inference request
     InferenceRequest* inf_request = Server_CreateRequest(body_data, body_size,
-                                                         "application/octet-stream", image_index);
+                                                         "application/octet-stream", image_index,
+                                                         tensor_width, tensor_height);
     if (!inf_request) {
         ACAP_HTTP_Respond_Error(response, 500, "Internal Server Error: Failed to create request");
         return;
@@ -340,6 +354,88 @@ static void http_inference_tensor(ACAP_HTTP_Response response, const ACAP_HTTP_R
     }
 
     process_and_respond(response, inf_request);
+}
+
+// GET /monitor - Serve monitoring HTML page
+static void http_monitor(ACAP_HTTP_Response response, const ACAP_HTTP_Request request) {
+    // Read the HTML file
+    FILE* fp = ACAP_FILE_Open("html/monitor.html", "r");
+    if (!fp) {
+        ACAP_HTTP_Respond_Error(response, 404, "Monitoring page not found");
+        return;
+    }
+
+    // Get file size
+    fseek(fp, 0, SEEK_END);
+    long file_size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    // Read file content
+    char* html_content = malloc(file_size + 1);
+    if (!html_content) {
+        fclose(fp);
+        ACAP_HTTP_Respond_Error(response, 500, "Memory allocation failed");
+        return;
+    }
+
+    fread(html_content, 1, file_size, fp);
+    html_content[file_size] = '\0';
+    fclose(fp);
+
+    // Send HTML response
+    FCGX_FPrintF(response->out, "HTTP/1.1 200 OK\r\n");
+    FCGX_FPrintF(response->out, "Content-Type: text/html; charset=utf-8\r\n");
+    FCGX_FPrintF(response->out, "Content-Length: %ld\r\n", file_size);
+    FCGX_FPrintF(response->out, "\r\n");
+    FCGX_FPrintF(response->out, "%s", html_content);
+
+    free(html_content);
+}
+
+// GET /monitor-latest - Return latest inference data as JSON
+static void http_monitor_latest(ACAP_HTTP_Response response, const ACAP_HTTP_Request request) {
+    uint8_t* image_data = NULL;
+    size_t image_size = 0;
+    char* detections_json = NULL;
+    time_t timestamp = 0;
+
+    // Get latest inference
+    if (!Server_GetLatestInference(&image_data, &image_size, &detections_json, &timestamp)) {
+        ACAP_HTTP_Respond_Error(response, 404, "No inference data available yet");
+        return;
+    }
+
+    // Base64 encode the JPEG image using glib
+    gchar* image_base64 = g_base64_encode(image_data, image_size);
+    if (!image_base64) {
+        free(image_data);
+        free(detections_json);
+        ACAP_HTTP_Respond_Error(response, 500, "Failed to encode image");
+        return;
+    }
+
+    // Create response JSON
+    cJSON* resp = cJSON_CreateObject();
+    cJSON_AddStringToObject(resp, "image", image_base64);
+
+    // Parse detections_json string and add as array
+    cJSON* detections_array = cJSON_Parse(detections_json);
+    if (detections_array) {
+        cJSON_AddItemToObject(resp, "detections", detections_array);
+    } else {
+        cJSON_AddArrayToObject(resp, "detections");  // Empty array if parsing fails
+    }
+
+    cJSON_AddNumberToObject(resp, "timestamp", (double)timestamp);
+
+    // Send JSON response
+    ACAP_HTTP_Respond_JSON(response, resp);
+
+    // Cleanup
+    free(image_data);
+    g_free(image_base64);
+    free(detections_json);
+    cJSON_Delete(resp);
 }
 
 int main(void) {
@@ -365,6 +461,8 @@ int main(void) {
     ACAP_HTTP_Node("inference-jpeg", http_inference_jpeg);
     ACAP_HTTP_Node("inference-tensor", http_inference_tensor);
     ACAP_HTTP_Node("health", http_health);
+    ACAP_HTTP_Node("monitor", http_monitor);
+    ACAP_HTTP_Node("monitor-latest", http_monitor_latest);
 
     // Initialize ACAP status
     update_acap_status();

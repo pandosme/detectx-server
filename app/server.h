@@ -21,6 +21,8 @@ typedef struct {
     uint8_t* image_data;
     size_t image_size;
     int image_index;        // For dataset validation (-1 if not specified)
+    int image_width;        // Original received image width
+    int image_height;       // Original received image height
     char* content_type;
     void* response_data;    // Will hold cJSON* response
     int status_code;
@@ -39,6 +41,16 @@ typedef struct {
     pthread_cond_t not_full;
 } RequestQueue;
 
+// Latest inference cache (for monitoring)
+typedef struct {
+    uint8_t* image_data;       // JPEG image data
+    size_t image_size;
+    char* detections_json;     // JSON string of detections
+    time_t timestamp;
+    pthread_mutex_t lock;
+    bool has_data;
+} LatestInference;
+
 // Server state
 typedef struct {
     bool running;
@@ -55,6 +67,9 @@ typedef struct {
     double total_inference_time_ms;
     double min_inference_time_ms;
     double max_inference_time_ms;
+
+    // Latest inference cache
+    LatestInference latest;
 } ServerState;
 
 // Server lifecycle
@@ -64,7 +79,8 @@ bool Server_IsRunning(void);
 
 // Request processing
 InferenceRequest* Server_CreateRequest(const uint8_t* data, size_t size,
-                                      const char* content_type, int image_index);
+                                      const char* content_type, int image_index,
+                                      int image_width, int image_height);
 bool Server_QueueRequest(InferenceRequest* request);
 void Server_FreeRequest(InferenceRequest* request);
 
@@ -76,5 +92,11 @@ void Server_GetTiming(double* avg_ms, double* min_ms, double* max_ms);
 // Queue status
 int Server_GetQueueSize(void);
 bool Server_IsQueueFull(void);
+
+// Latest inference cache (for monitoring)
+void Server_StoreLatestInference(const uint8_t* image_data, size_t image_size,
+                                 const char* detections_json);
+bool Server_GetLatestInference(uint8_t** image_data, size_t* image_size,
+                               char** detections_json, time_t* timestamp);
 
 #endif // SERVER_H

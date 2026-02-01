@@ -57,7 +57,8 @@ static void* inference_worker(void* arg) {
         if (req->content_type && strcmp(req->content_type, "image/jpeg") == 0) {
             // JPEG inference
             detections = Model_InferenceJPEG(req->image_data, req->image_size,
-                                            req->image_index, &error_msg);
+                                            req->image_index, req->image_width, req->image_height,
+                                            &error_msg);
         } else if (req->content_type && strcmp(req->content_type, "application/octet-stream") == 0) {
             // Tensor inference
             int width = Model_GetWidth();
@@ -90,6 +91,15 @@ static void* inference_worker(void* arg) {
                 }
                 if (elapsed_ms > g_server.max_inference_time_ms) {
                     g_server.max_inference_time_ms = elapsed_ms;
+                }
+            }
+
+            // Store latest inference for monitoring (JPEG only, best-effort)
+            if (req->content_type && strcmp(req->content_type, "image/jpeg") == 0) {
+                char* detections_str = cJSON_PrintUnformatted(detections);
+                if (detections_str) {
+                    Server_StoreLatestInference(req->image_data, req->image_size, detections_str);
+                    free(detections_str);
                 }
             }
 
@@ -127,6 +137,12 @@ bool Server_Init(void) {
     pthread_mutex_init(&g_server.queue.lock, NULL);
     pthread_cond_init(&g_server.queue.not_empty, NULL);
     pthread_cond_init(&g_server.queue.not_full, NULL);
+
+    // Initialize latest inference cache
+    pthread_mutex_init(&g_server.latest.lock, NULL);
+    g_server.latest.has_data = false;
+    g_server.latest.image_data = NULL;
+    g_server.latest.detections_json = NULL;
 
     // Initialize model
     if (!Model_Setup()) {
@@ -173,6 +189,17 @@ void Server_Cleanup(void) {
     // Cleanup model
     Model_Cleanup();
 
+    // Cleanup latest inference cache
+    pthread_mutex_lock(&g_server.latest.lock);
+    if (g_server.latest.image_data) {
+        free(g_server.latest.image_data);
+    }
+    if (g_server.latest.detections_json) {
+        free(g_server.latest.detections_json);
+    }
+    pthread_mutex_unlock(&g_server.latest.lock);
+    pthread_mutex_destroy(&g_server.latest.lock);
+
     // Cleanup queue
     pthread_mutex_destroy(&g_server.queue.lock);
     pthread_cond_destroy(&g_server.queue.not_empty);
@@ -188,7 +215,8 @@ bool Server_IsRunning(void) {
 
 // Create a new inference request
 InferenceRequest* Server_CreateRequest(const uint8_t* data, size_t size,
-                                      const char* content_type, int image_index) {
+                                      const char* content_type, int image_index,
+                                      int image_width, int image_height) {
     if (!data || size == 0 || size > MAX_IMAGE_SIZE) {
         syslog(LOG_ERR, "Invalid request parameters (size: %zu)", size);
         return NULL;
@@ -216,6 +244,8 @@ InferenceRequest* Server_CreateRequest(const uint8_t* data, size_t size,
     }
 
     req->image_index = image_index;
+    req->image_width = image_width;
+    req->image_height = image_height;
     req->processed = false;
     req->status_code = 0;
     req->response_data = NULL;
@@ -309,4 +339,68 @@ bool Server_IsQueueFull(void) {
     bool full = (g_server.queue.count >= MAX_QUEUE_SIZE);
     pthread_mutex_unlock(&g_server.queue.lock);
     return full;
+}
+
+// Store latest inference for monitoring (best-effort, non-blocking)
+void Server_StoreLatestInference(const uint8_t* image_data, size_t image_size,
+                                 const char* detections_json) {
+    if (!image_data || !detections_json || image_size == 0) {
+        return;
+    }
+
+    pthread_mutex_lock(&g_server.latest.lock);
+
+    // Free old data if exists
+    if (g_server.latest.image_data) {
+        free(g_server.latest.image_data);
+        g_server.latest.image_data = NULL;
+    }
+    if (g_server.latest.detections_json) {
+        free(g_server.latest.detections_json);
+        g_server.latest.detections_json = NULL;
+    }
+
+    // Store new data (copy)
+    g_server.latest.image_data = malloc(image_size);
+    if (g_server.latest.image_data) {
+        memcpy(g_server.latest.image_data, image_data, image_size);
+        g_server.latest.image_size = image_size;
+        g_server.latest.detections_json = strdup(detections_json);
+        g_server.latest.timestamp = time(NULL);
+        g_server.latest.has_data = true;
+    } else {
+        syslog(LOG_WARNING, "Failed to allocate memory for latest inference cache");
+    }
+
+    pthread_mutex_unlock(&g_server.latest.lock);
+}
+
+// Get latest inference for monitoring
+bool Server_GetLatestInference(uint8_t** image_data, size_t* image_size,
+                               char** detections_json, time_t* timestamp) {
+    if (!image_data || !image_size || !detections_json || !timestamp) {
+        return false;
+    }
+
+    pthread_mutex_lock(&g_server.latest.lock);
+
+    if (!g_server.latest.has_data) {
+        pthread_mutex_unlock(&g_server.latest.lock);
+        return false;
+    }
+
+    // Copy data out
+    *image_data = malloc(g_server.latest.image_size);
+    if (!*image_data) {
+        pthread_mutex_unlock(&g_server.latest.lock);
+        return false;
+    }
+
+    memcpy(*image_data, g_server.latest.image_data, g_server.latest.image_size);
+    *image_size = g_server.latest.image_size;
+    *detections_json = strdup(g_server.latest.detections_json);
+    *timestamp = g_server.latest.timestamp;
+
+    pthread_mutex_unlock(&g_server.latest.lock);
+    return true;
 }

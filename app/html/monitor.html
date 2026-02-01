@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DetectX COCO Hub - Monitor</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --primary-light: #3b82f6;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --info-color: #06b6d4;
+        --bg-light: #f8fafc;
+        --bg-white: #ffffff;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+    }
+
+    /* Top Navigation Bar */
+    .top-navbar {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        box-shadow: var(--shadow-lg);
+        padding: 0;
+        min-height: 64px;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: white !important;
+        padding: 0.75rem 1.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.85) !important;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: white !important;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .navbar-nav .nav-link.active {
+        color: white !important;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+    }
+
+    /* Main Content Area */
+    .main-content {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    /* Cards */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        background: var(--bg-white);
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--bg-light);
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+    }
+
+    .status-waiting {
+        background-color: rgba(100, 116, 139, 0.15);
+        color: var(--text-muted);
+    }
+
+    /* Stat Row */
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .stat-value {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    /* Metric Card */
+    .metric-card {
+        text-align: center;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .metric-label {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    /* Canvas Container */
+    .canvas-container {
+        position: relative;
+        width: 100%;
+        background-color: #000;
+        border-radius: 8px;
+        overflow: hidden;
+        min-height: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #inference-canvas {
+        max-width: 100%;
+        max-height: 600px;
+        display: block;
+    }
+
+    .no-data-message {
+        color: var(--text-muted);
+        text-align: center;
+        padding: 3rem;
+    }
+
+    /* Detection List */
+    .detection-list {
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .detection-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background-color: var(--bg-light);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-color);
+        transition: all 0.2s ease;
+    }
+
+    .detection-item:hover {
+        background-color: rgba(37, 99, 235, 0.1);
+        transform: translateX(4px);
+    }
+
+    .detection-color {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .detection-info {
+        flex-grow: 1;
+    }
+
+    .detection-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .detection-count {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+
+    .detection-badge {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.65rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg top-navbar">
+        <div class="container-fluid">
+            <span class="navbar-brand">DetectX COCO Hub</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    style="border-color: rgba(255,255,255,0.3);">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="monitor.html">Monitor</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Statistics Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-detections">0</div>
+                    <div class="metric-label">Total Detections</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);">
+                    <div class="metric-value" style="color: var(--success-color);" id="unique-classes">0</div>
+                    <div class="metric-label">Unique Classes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%);">
+                    <div class="metric-value" style="color: var(--info-color);" id="avg-confidence">0%</div>
+                    <div class="metric-label">Avg Confidence</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-body" style="padding: 1.25rem;">
+                        <div class="stat-row" style="border: none; padding: 0;">
+                            <span class="stat-label">Status</span>
+                            <span class="status-badge status-waiting" id="monitor-status">Waiting</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Monitor Row -->
+        <div class="row g-4">
+            <!-- Inference Image -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Latest Inference</h5>
+                        <div class="canvas-container" id="canvas-container">
+                            <div class="no-data-message">
+                                <div class="spinner-border text-muted" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3">Waiting for inference data...</p>
+                            </div>
+                            <canvas id="inference-canvas" style="display: none;"></canvas>
+                        </div>
+                        <div class="mt-3">
+                            <div class="stat-row">
+                                <span class="stat-label">Last Updated</span>
+                                <span class="stat-value" id="last-updated">Never</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detection List -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Detections by Class</h5>
+                        <div class="detection-list" id="detection-list">
+                            <div class="no-data-message" style="padding: 2rem;">
+                                <p class="text-muted" style="margin: 0;">No detections yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('inference-canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasContainer = document.getElementById('canvas-container');
+        let currentDetections = [];
+        let classColors = {};
+
+        // Color palette for bounding boxes
+        const colors = [
+            '#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#3b82f6',
+            '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#6366f1'
+        ];
+
+        function getColorForClass(className) {
+            if (!classColors[className]) {
+                let hash = 0;
+                for (let i = 0; i < className.length; i++) {
+                    hash = className.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                classColors[className] = colors[Math.abs(hash) % colors.length];
+            }
+            return classColors[className];
+        }
+
+        async function fetchLatestInference() {
+            try {
+                const response = await fetch('/local/detectx/monitor-latest');
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        return null;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching inference:', error);
+                return null;
+            }
+        }
+
+        function drawInferenceImage(imageBase64, detections) {
+            const img = new Image();
+            img.onload = function() {
+                // Set canvas size to match image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Draw image
+                ctx.drawImage(img, 0, 0);
+
+                // Draw bounding boxes
+                detections.forEach(det => {
+                    const color = getColorForClass(det.label);
+                    const bbox = det.bbox_pixels;
+
+                    // Draw rectangle
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(bbox.x, bbox.y, bbox.w, bbox.h);
+
+                    // Draw label background
+                    const label = `${det.label} ${(det.confidence * 100).toFixed(0)}%`;
+                    ctx.font = 'bold 16px sans-serif';
+                    const textMetrics = ctx.measureText(label);
+                    const textHeight = 20;
+                    const padding = 4;
+
+                    ctx.fillStyle = color;
+                    ctx.fillRect(
+                        bbox.x,
+                        bbox.y - textHeight - padding * 2,
+                        textMetrics.width + padding * 2,
+                        textHeight + padding * 2
+                    );
+
+                    // Draw label text
+                    ctx.fillStyle = 'white';
+                    ctx.fillText(label, bbox.x + padding, bbox.y - padding - 4);
+                });
+
+                // Show canvas, hide loading message
+                canvas.style.display = 'block';
+                const noDataMsg = canvasContainer.querySelector('.no-data-message');
+                if (noDataMsg) noDataMsg.style.display = 'none';
+            };
+            img.src = 'data:image/jpeg;base64,' + imageBase64;
+        }
+
+        function updateDetectionList(detections) {
+            // Count detections by class
+            const classCounts = {};
+            detections.forEach(det => {
+                classCounts[det.label] = (classCounts[det.label] || 0) + 1;
+            });
+
+            // Sort by count descending
+            const sortedClasses = Object.entries(classCounts)
+                .sort((a, b) => b[1] - a[1]);
+
+            const listHtml = sortedClasses.map(([label, count]) => {
+                const color = getColorForClass(label);
+                return `
+                    <div class="detection-item">
+                        <div class="detection-color" style="background-color: ${color};"></div>
+                        <div class="detection-info">
+                            <div class="detection-label">${label}</div>
+                        </div>
+                        <div class="detection-badge">${count}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('detection-list').innerHTML = listHtml ||
+                '<div class="no-data-message" style="padding: 2rem;"><p class="text-muted" style="margin: 0;">No detections</p></div>';
+        }
+
+        function updateStatistics(detections) {
+            const totalDetections = detections.length;
+            const uniqueClasses = new Set(detections.map(d => d.label)).size;
+            const avgConfidence = totalDetections > 0
+                ? (detections.reduce((sum, d) => sum + d.confidence, 0) / totalDetections * 100).toFixed(1)
+                : 0;
+
+            document.getElementById('total-detections').textContent = totalDetections;
+            document.getElementById('unique-classes').textContent = uniqueClasses;
+            document.getElementById('avg-confidence').textContent = avgConfidence + '%';
+
+            // Update status
+            const statusBadge = document.getElementById('monitor-status');
+            if (totalDetections > 0) {
+                statusBadge.textContent = 'Active';
+                statusBadge.className = 'status-badge status-active';
+            } else {
+                statusBadge.textContent = 'No Detections';
+                statusBadge.className = 'status-badge status-waiting';
+            }
+        }
+
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleString();
+        }
+
+        async function updateMonitor() {
+            const data = await fetchLatestInference();
+
+            if (data && data.image && data.detections) {
+                currentDetections = data.detections;
+                drawInferenceImage(data.image, data.detections);
+                updateDetectionList(data.detections);
+                updateStatistics(data.detections);
+                document.getElementById('last-updated').textContent = formatTimestamp(data.timestamp);
+            }
+        }
+
+        // Initial load
+        updateMonitor();
+
+        // Auto-refresh every 2 seconds
+        setInterval(updateMonitor, 2000);
+    </script>
+</body>
+</html>

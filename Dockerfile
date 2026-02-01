@@ -42,4 +42,5 @@ ARG CHIP=
 RUN . /opt/axis/acapsdk/environment-setup* && acap-build . \
     -a 'settings/settings.json' \
     -a 'model/model.tflite' \
-    -a 'model/labels.txt'
+    -a 'model/labels.txt' \
+    -a 'html'

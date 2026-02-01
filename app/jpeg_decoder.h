@@ -36,4 +36,16 @@ bool JPEG_Decode(const uint8_t* jpeg_data, size_t jpeg_size, DecodedImage* out_i
  */
 void JPEG_FreeImage(DecodedImage* image);
 
+/**
+ * @brief Get dimensions of a JPEG image without full decoding
+ *
+ * @param jpeg_data  Input JPEG buffer
+ * @param jpeg_size  Size of JPEG data
+ * @param width      Output width
+ * @param height     Output height
+ * @return true on success, false on error
+ */
+bool JPEG_GetDimensions(const uint8_t* jpeg_data, size_t jpeg_size,
+                        int* width, int* height);
+
 #endif // JPEG_DECODER_H

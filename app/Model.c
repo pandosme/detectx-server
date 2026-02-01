@@ -537,13 +537,23 @@ cJSON* Model_InferenceTensor(const uint8_t* rgb_data, int width, int height,
 }
 
 cJSON* Model_InferenceJPEG(const uint8_t* jpeg_data, size_t jpeg_size,
-                           int image_index, char** error_msg) {
+                           int image_index, int image_width, int image_height,
+                           char** error_msg) {
     if (error_msg) *error_msg = NULL;
 
     // Decode JPEG
     DecodedImage img;
     if (!JPEG_Decode(jpeg_data, jpeg_size, &img)) {
         if (error_msg) *error_msg = strdup("Failed to decode JPEG image");
+        return NULL;
+    }
+
+    // Validate dimensions match what was provided
+    if (img.width != image_width || img.height != image_height) {
+        LOG_WARN("JPEG dimension mismatch: expected %dx%d, got %dx%d\n",
+                 image_width, image_height, img.width, img.height);
+        JPEG_FreeImage(&img);
+        if (error_msg) *error_msg = strdup("JPEG dimension mismatch");
         return NULL;
     }
 

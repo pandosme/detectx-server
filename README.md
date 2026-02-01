@@ -349,6 +349,68 @@ curl -X POST http://camera-ip:8080/local/detectx/inference-jpeg \
 
 ---
 
+## Monitoring Dashboard
+
+DetectX Server includes a **real-time monitoring dashboard** for visualizing inference results.
+
+**Access**: `http://camera-ip:8080/local/detectx/monitor`
+
+### Features:
+- 📸 **Live Image Display** - View the latest image sent for inference
+- 🎯 **Detection Overlays** - Bounding boxes drawn on images with labels and confidence scores
+- 📊 **Real-time Statistics** - Total detections, unique classes, images processed, average confidence
+- 📈 **Class Counters** - Cumulative count of detections by class (sorted by frequency)
+- ⚡ **Auto-refresh** - Updates every 2 seconds automatically
+
+### How It Works:
+- Displays the most recent JPEG inference request (best-effort caching)
+- Detection bounding boxes are color-coded by class for easy identification
+- Statistics accumulate since page load
+- No authentication required (viewer role)
+- Missing images are OK (page waits for new inference requests)
+
+### Screenshot:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ DetectX Server Monitor                          ● LIVE      │
+├────────────────────────────────┬────────────────────────────┤
+│                                │  Total Detections:    127  │
+│    Latest Inference Image      │  Unique Classes:       12  │
+│    [Image with bounding boxes] │  Images Processed:     45  │
+│                                │  Avg Confidence:     78.3% │
+│                                │                            │
+│                                │  Detection Counts:         │
+│                                │   person          ████ 43  │
+│                                │   car             ███  32  │
+│                                │   bicycle         ██   18  │
+│                                │   dog             █    12  │
+│                                │   ...                      │
+└────────────────────────────────┴────────────────────────────┘
+```
+
+### Usage:
+
+**1. Start inference server** on ARTPEC-9 camera
+
+**2. Send some inference requests:**
+```bash
+curl -X POST http://camera-ip:8080/local/detectx/inference-jpeg \
+  -H "Content-Type: image/jpeg" \
+  --data-binary @test.jpg
+```
+
+**3. Open monitoring page** in browser:
+```
+http://camera-ip:8080/local/detectx/monitor
+```
+
+**Result**: You'll see the latest image with detection overlays and live statistics!
+
+**Note**: Only JPEG inference requests are cached for monitoring. Tensor endpoint requests are not displayed (no image data to show).
+
+---
+
 ## API Reference
 
 DetectX Server provides 4 REST endpoints under `/local/detectx`:

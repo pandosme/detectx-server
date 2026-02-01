@@ -43,22 +43,26 @@ int Model_GetHeight(void);
  * - Will be automatically scaled/letterboxed to model input size
  *
  * Returns a cJSON array of detection objects. Each detection object includes:
+ *   - "index": Image index (if provided, otherwise -1)
+ *   - "image": Object with width and height of original image
  *   - "label": Detected object class as a string
  *   - "class_id": Numeric class identifier
  *   - "confidence": Confidence value (0.0-1.0)
- *   - "bbox_pixels": Object with x, y, w, h in pixels
- *   - "bbox_yolo": Object with x, y, w, h normalized (0.0-1.0, center format)
- *   - "index": Image index (if provided, otherwise -1)
+ *   - "bbox_pixels": Object with x, y, w, h in pixels (in original image coordinates)
+ *   - "bbox_yolo": Object with x, y, w, h normalized (0.0-1.0, center format, relative to original image)
  *
  * @param jpeg_data  JPEG image data buffer
  * @param jpeg_size  Size of JPEG data in bytes
  * @param image_index  Image index for dataset validation (-1 if not applicable)
+ * @param image_width  Original JPEG image width
+ * @param image_height  Original JPEG image height
  * @param error_msg  Output: Error message if validation fails (can be NULL)
  * @return A cJSON array of detection objects, or NULL on error.
  *         Caller is responsible for freeing (cJSON_Delete).
  */
 cJSON* Model_InferenceJPEG(const uint8_t* jpeg_data, size_t jpeg_size,
-                           int image_index, char** error_msg);
+                           int image_index, int image_width, int image_height,
+                           char** error_msg);
 
 /**
  * @brief Perform inference on pre-processed tensor data (optimal performance).
@@ -70,6 +74,7 @@ cJSON* Model_InferenceJPEG(const uint8_t* jpeg_data, size_t jpeg_size,
  * - Dimensions must match model input (typically 640x640)
  *
  * Returns a cJSON array of detection objects (same format as InferenceJPEG).
+ * Coordinates are returned in the tensor coordinate space (width x height).
  *
  * @param rgb_data  Raw RGB pixel data (interleaved)
  * @param width  Image width (must match model input width)

@@ -120,3 +120,46 @@ void JPEG_FreeImage(DecodedImage* image) {
 
     memset(image, 0, sizeof(DecodedImage));
 }
+
+bool JPEG_GetDimensions(const uint8_t* jpeg_data, size_t jpeg_size,
+                        int* width, int* height) {
+    if (!jpeg_data || jpeg_size == 0 || !width || !height) {
+        syslog(LOG_ERR, "JPEG_GetDimensions: Invalid parameters");
+        return false;
+    }
+
+    struct jpeg_decompress_struct cinfo;
+    struct my_error_mgr jerr;
+
+    // Setup error handling
+    cinfo.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = my_error_exit;
+
+    if (setjmp(jerr.setjmp_buffer)) {
+        syslog(LOG_ERR, "JPEG header read error");
+        jpeg_destroy_decompress(&cinfo);
+        return false;
+    }
+
+    // Initialize decompressor
+    jpeg_create_decompress(&cinfo);
+
+    // Set source to memory buffer
+    jpeg_mem_src(&cinfo, jpeg_data, jpeg_size);
+
+    // Read JPEG header only
+    if (jpeg_read_header(&cinfo, TRUE) != JPEG_HEADER_OK) {
+        syslog(LOG_ERR, "Invalid JPEG header");
+        jpeg_destroy_decompress(&cinfo);
+        return false;
+    }
+
+    // Extract dimensions
+    *width = cinfo.image_width;
+    *height = cinfo.image_height;
+
+    // Cleanup (no decompression needed)
+    jpeg_destroy_decompress(&cinfo);
+
+    return true;
+}

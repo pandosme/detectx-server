@@ -19,7 +19,9 @@
 				{"name": "capabilities","access": "viewer","type": "fastCgi"},
 				{"name": "inference-jpeg","access": "viewer","type": "fastCgi"},
 				{"name": "inference-tensor","access": "viewer","type": "fastCgi"},
-				{"name": "health","access": "viewer","type": "fastCgi"}
+				{"name": "health","access": "viewer","type": "fastCgi"},
+				{"name": "monitor","access": "viewer","type": "fastCgi"},
+				{"name": "monitor-latest","access": "viewer","type": "fastCgi"}
 			]
 		}
     },
