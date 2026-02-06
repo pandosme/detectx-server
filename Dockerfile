@@ -34,6 +34,13 @@ COPY ./app .
 # Ensure local lib and include directories exist (if not already present)
 RUN mkdir -p lib include
 
+# Create library symlinks (handles broken symlinks from git on Windows)
+# This ensures the linker can find -ljpeg and -lturbojpeg regardless of platform
+RUN cd lib && \
+    rm -f libjpeg.so libturbojpeg.so && \
+    ln -sf libjpeg.so.62.4.0 libjpeg.so && \
+    ln -sf libturbojpeg.so.0.3.0 libturbojpeg.so
+
 # Extract model parameters using TensorFlow (generates model_params.h)
 RUN . /opt/venv/bin/activate && python extract_model_params.py 'model/model.tflite'
 

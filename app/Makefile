@@ -15,7 +15,15 @@ LDLIBS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS))
 
 CFLAGS += -Wall -Wno-format-overflow -Wno-format-truncation
 
-all: $(PROGS)
+all: setup-libs $(PROGS)
+
+setup-libs:
+	@echo "Setting up library symlinks..."
+	@cd $(LIBDIR) && rm -f libjpeg.so libturbojpeg.so && \
+		ln -sf libjpeg.so.62.4.0 libjpeg.so && \
+		ln -sf libturbojpeg.so.0.3.0 libturbojpeg.so
+
+.PHONY: setup-libs
 
 $(PROG1): $(OBJS1)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@

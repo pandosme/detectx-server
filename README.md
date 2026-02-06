@@ -1078,11 +1078,24 @@ detectx-server/
 
 **Problem**: `cannot find -ljpeg: No such file or directory`
 
-**Solution**: Missing library symlinks. Run:
+**Cause**: When cloning on Windows or with git config `core.symlinks=false`, library symlinks in `app/lib/` may become text files instead of actual symbolic links.
+
+**Solution**: This is now **fixed automatically** during build:
+- **Docker build** (`./build.sh`): Symlinks are created automatically in the Dockerfile
+- **Local build** (`make`): Symlinks are created automatically by the Makefile
+
+If you still encounter this issue, manually recreate symlinks:
 ```bash
 cd app/lib
+rm -f libjpeg.so libturbojpeg.so
 ln -sf libjpeg.so.62.4.0 libjpeg.so
 ln -sf libturbojpeg.so.0.3.0 libturbojpeg.so
+```
+
+Or run the setup script:
+```bash
+cd app
+./setup-libs.sh
 ```
 
 ---
